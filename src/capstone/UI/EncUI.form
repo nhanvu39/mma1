@@ -259,7 +259,7 @@
               <ComponentRef name="buttonGroup1"/>
             </Property>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="DES"/>
+            <Property name="text" type="java.lang.String" value="AES"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButton1ActionPerformed"/>

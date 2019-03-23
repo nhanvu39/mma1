@@ -145,7 +145,7 @@ public class EncUI extends javax.swing.JFrame {
 
         buttonGroup1.add(jRadioButton1);
         jRadioButton1.setSelected(true);
-        jRadioButton1.setText("DES");
+        jRadioButton1.setText("AES");
         jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButton1ActionPerformed(evt);
@@ -301,7 +301,7 @@ public class EncUI extends javax.swing.JFrame {
                   }
                 }
                 infoTextArea.append("\nEncrypting File...");
-                output = Encryption.encrypt(fio.getDecFile(),pw);
+                output = Encryption.encrypt(fio.getDecFile(), pw, alg);
                 infoTextArea.append("\nEncryption Successful");
                 infoTextArea.append("\nOutput File Name: " + output);
             } catch (Exception ex) {
@@ -340,13 +340,8 @@ public class EncUI extends javax.swing.JFrame {
     private void fcBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fcBtnActionPerformed
         File file = selectFile();
         if(file!=null){
-//            if (fio.isEncrypted(file)) {
-//                encButton.setEnabled(false);
-//                fio.setEncFile(file);
-//            } else {
-//                decButton.setEnabled(false);
-//                fio.setDecFile(file);
-//            }
+            fio.setEncFile(file);
+            fio.setDecFile(file);
             infoTextArea.append("\nFile Selected:  " + file.getName());
             fileTextField.setText(file.getAbsolutePath());
         }else{

@@ -1,12 +1,5 @@
 package capstone.encryption;
 
-/**
- * Created by Jeremy Blanchard on 7/13/2016. This class takes a file as an input
- * stream which is saved to a byte array.   The user will then enter a password. The 
- * password is then combined with a SecureRandom
- *
- * 
- */
 //File IO imports
 import capstone.fileio.FileIO;
 import java.io.File;
@@ -22,23 +15,13 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-
-/**
- * This class performs the file encryption. First a password is created by the
- * user.  This password is combined with an 8-byte SecureRandom which is then used to generate the key
- * used to initialize the cipher.  An initialization vector, which introduces randomness when ciphering similar plain text, is created.  
- * The SecureRandom, IV, and ciphertext are then output to a file, adding the ".aes" extension.
- *
- * @author Jeremy Blanchard
- */
 public class Encryption {
 
     static FileIO fio;
     private static final String ALG = "AES";
     private static final String CIPH = "AES/CBC/PKCS5Padding";
     private static final String KEYFAC = "PBKDF2WithHmacSHA1";
-
-   
+  
 
     /**
      * The Encryption.encrypt method performs the encryption operation.  This method is passed 2 arguments.  

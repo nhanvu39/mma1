@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package capstone.UI;
 
 //Class Imports
@@ -163,45 +158,47 @@ public class EncUI extends javax.swing.JFrame {
         encryptPanelLayout.setHorizontalGroup(
             encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(encryptPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
                     .addGroup(encryptPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1)
-                            .addGroup(encryptPanelLayout.createSequentialGroup()
-                                .addGap(8, 8, 8)
-                                .addComponent(statusLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(encryptPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(titleLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(8, 8, 8)
+                        .addComponent(statusLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(titleLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(encryptPanelLayout.createSequentialGroup()
                 .addGap(51, 51, 51)
                 .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(encryptPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, encryptPanelLayout.createSequentialGroup()
-                        .addComponent(fileNameLbl)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(fileTextField)
-                        .addGap(18, 18, 18)
-                        .addComponent(fcBtn))
-                    .addGroup(encryptPanelLayout.createSequentialGroup()
                         .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(encButton)
                             .addGroup(encryptPanelLayout.createSequentialGroup()
-                                .addComponent(jRadioButton1)
-                                .addGap(110, 110, 110)
-                                .addComponent(jRadioButton2)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 115, Short.MAX_VALUE)
+                                .addComponent(encButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(encryptPanelLayout.createSequentialGroup()
+                                .addComponent(jRadioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(121, 121, 121)
+                                .addComponent(jRadioButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(105, 105, 105)))
                         .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton3)
-                            .addComponent(decButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(encryptPanelLayout.createSequentialGroup()
+                                .addComponent(jRadioButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(12, 12, 12))
+                            .addComponent(decButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, encryptPanelLayout.createSequentialGroup()
+                        .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fileNameLbl)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(encryptPanelLayout.createSequentialGroup()
+                                .addComponent(jTextField1)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton1))
+                            .addGroup(encryptPanelLayout.createSequentialGroup()
+                                .addComponent(fileTextField)
+                                .addGap(18, 18, 18)
+                                .addComponent(fcBtn)))))
                 .addGap(43, 43, 43))
         );
         encryptPanelLayout.setVerticalGroup(
@@ -241,8 +238,8 @@ public class EncUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(encryptPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(encryptPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(13, 13, 13))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,7 +256,7 @@ public class EncUI extends javax.swing.JFrame {
 
     private void decButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decButtonActionPerformed
         String output;
-        infoTextArea.append("\nAction Selected:    Decrypt File:  " + fio.getEncFile().getName());
+        infoTextArea.append("\nAction Selected:    Decrypt File");
         String pw = key;
         if(!pw.equals("") && (!fileTextField.getText().equals(""))){
             try {
@@ -271,14 +268,14 @@ public class EncUI extends javax.swing.JFrame {
                   }
                 }
                 infoTextArea.append("\nDecrypting File...");
-                output = Decryption.decrypt(fio.getEncFile(),pw);
+                output = Decryption.decrypt(fio.getEncFile(), pw, alg);
                 infoTextArea.append("\nDecryption Successful");
                 infoTextArea.append("\nOutput File Name:    \n" + output);
             } catch (Exception ex) {
                 Logger.getLogger(EncUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else{
-            infoTextArea.append("\nNo Key or Filepath!\nDecryption Cancelled");
+            infoTextArea.append("\nNo Key or Filepath!\nFile Decryption Cancelled");
         }
 
         cleanup();        
@@ -309,7 +306,6 @@ public class EncUI extends javax.swing.JFrame {
             }
         }else{
             infoTextArea.append("\nNo Key or Filepath!\nFile Encryption Cancelled");
-            fileTextField.setText("");
         }
 
         cleanup();
@@ -323,20 +319,6 @@ public class EncUI extends javax.swing.JFrame {
      * @return the value entered by the user
      */
     
-    private static String getUserPassword() {
-        
-        JPasswordField pwd = new JPasswordField(15);
-        String pw = "";
-        int action = JOptionPane.showConfirmDialog(null, pwd, "Enter Password", JOptionPane.OK_CANCEL_OPTION);
-        if (action < 0) {
-            JOptionPane.showMessageDialog(null, "Cancelling ");
-        } else {
-            pw = new String(pwd.getPassword());
-        }
-
-       
-        return pw;
-    }
     private void fcBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fcBtnActionPerformed
         File file = selectFile();
         if(file!=null){
@@ -353,13 +335,15 @@ public class EncUI extends javax.swing.JFrame {
         Path path = Paths.get(fileTextField.getText()).toAbsolutePath();
         infoTextArea.append("\n Selected File Path:"+path.toString());
         if (Files.exists(path)) {
-            if (fio.isEncrypted(path)) {
-                encButton.setEnabled(false);
-                fio.setEncFile(path);                
-            } else {
-                decButton.setEnabled(false);
-                fio.setDecFile(path);
-            }
+//            if (fio.isEncrypted(path)) {
+//                encButton.setEnabled(false);
+//                fio.setEncFile(path);                
+//            } else {
+//                decButton.setEnabled(false);
+//                fio.setDecFile(path);
+//            }
+            fio.setEncFile(path);
+            fio.setDecFile(path);
         } else {
             infoTextArea.append("***Error:  File cannot be found, please check that the correct location was entered. ***");
         }

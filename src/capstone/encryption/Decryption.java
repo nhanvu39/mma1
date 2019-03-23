@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package capstone.encryption;
 
 import java.io.File;
@@ -18,10 +13,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- *
- * @author Jeremy Blanchard
- */
+
 public class Decryption {
     
     private static final String ALG = "AES";
@@ -36,11 +28,12 @@ public class Decryption {
      * @param file The file to be encrypted.
      * @param password  The users password.  The password is combined with a salt which is embedded in the ciphertext and then used to 
      * generate the encryption key.  The generated encryption key is then used to initialize the cipher for decryption.
+     * @param alg
      * @return  The filename including the path to the new file.
      * @throws Exception Any exception thrown during the decryption process causing the decryption to fail.  Most common exception thrown
      * is a BadPaddingException which indicates that the user has entered an incorrect password and the cipher fails to initialize.
      */
-    public static String decrypt(File file, String password) throws Exception {
+    public static String decrypt(File file, String password, String alg) throws Exception {
 	
         String fName;
         FileInputStream fis=null;

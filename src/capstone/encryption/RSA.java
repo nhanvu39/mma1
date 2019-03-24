@@ -65,7 +65,6 @@ public class RSA {
             obuf = ci.doFinal();
         } catch (IllegalBlockSizeException ex) {
             Logger.getLogger(RSA.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("123");
         }
 	if ( obuf != null ) out.write(obuf);
     }
@@ -164,30 +163,5 @@ public class RSA {
 	processFile(cipher, input, input.substring(0, input.length()-4));
         return 0;
     }
-
-    
-//    public static void main(String[] args) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException, Exception {
-        // TODO code application logic here
-//        if ( args.length == 0 ) {
-//	    System.err.print("usage: java sample1 command params..\n" +
-//			     "where commands are:\n" +
-//			     "  genkey fileBase\n" +
-//			     "  tnyenc pvtKeyFile inputFile\n" +
-//			     "  tnydec pubKeyFile inputFile\n" +
-//			     "  enc pvtKeyFile inputFile\n" +
-//			     "  dec pubKeyFile inputFile\n");
-//	    System.exit(1);
-//	}
-
-//	doGenkey();
-        
-	//doEncrypt(args[0],"PublicKey.txt");
-//        
-//        
-	 //doDecrypt(args[0]+".enc","PrivateKey.txt");
-	
-//	System.out.println("hello");
-    
-//    }
     
 }

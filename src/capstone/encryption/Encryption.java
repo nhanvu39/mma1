@@ -1,19 +1,36 @@
 package capstone.encryption;
 
 //File IO imports
+import capstone.UI.EncUI;
 import capstone.fileio.FileIO;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 //Cryptography imports
 import java.security.AlgorithmParameters;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import java.util.Base64;
 
 public class Encryption {
 
@@ -21,21 +38,8 @@ public class Encryption {
     private static final String ALG = "AES";
     private static final String CIPH = "AES/CBC/PKCS5Padding";
     private static final String KEYFAC = "PBKDF2WithHmacSHA1";
-  
-
-    /**
-     * The Encryption.encrypt method performs the encryption operation.  This method is passed 2 arguments.  
-     * The first is the File to be encrypted, and the second argument is the users password.  
-     * @param file The file to be encrypted
-     * @param password The users password which is then combined with a automatically generated SecureRandom.  This hash is then used 
-     * generate the encryption key which is used to initialize the cipher for Encryption.
-     * @param alg
-     * @return The filename including the path to the file.
-     * @throws Exception  There are a number of exceptions that could potentially be thrown during the encryption process. 
-     * Including IOException which indicates there was an error in reading/writing the file stream, NoSuchAlgorithmException indicates 
-     * that the system does not have the associated algorithm available.  
-     */
-    public static String encrypt(File file, String password, String alg) throws Exception {
+    
+    public static String encrypt(File file, File key, String alg) throws Exception {
         FileOutputStream outFile;
         // output file stream
         if (alg.equals("AES")){
@@ -44,8 +48,12 @@ public class Encryption {
             FileInputStream inFile = new FileInputStream(file)) {
                 // output file stream
                 outFile = new FileOutputStream(file + ".enc");
-
-                //create salt            
+                String password="";
+                byte[] bytes = Files.readAllBytes(Paths.get(key.toString()));
+                password = Arrays.toString(bytes);
+                
+//                    password = new Scanner(key).useDelimiter("\\Z").next();
+                //create salt 
                 byte[] salt = new byte[8];
                 SecureRandom secureRandom = new SecureRandom();
                 secureRandom.nextBytes(salt);
@@ -90,8 +98,62 @@ public class Encryption {
 
 //            return file + ".enc";
         }
+        else if (alg.equals("RSA")){
+            if (RSA.doEncrypt(file.toString(), key.toString()) == -1){
+                return "keyfailure";
+            }
+        }
+        else{
+            // decode the base64 encoded string
+            byte[] decodedKey = Files.readAllBytes(Paths.get(key.toString()));
+//            byte[] decodedKey = bytes;
+//            byte[] decodedKey = Base64.getDecoder().decode(bytes);
+            // rebuild key using SecretKeySpec
+            SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "DES"); 
+            DES.encryptFile(file, originalKey);
+        }
         
         return file + ".enc";
     }
+    public static void genKey(File folder, String alg) throws FileNotFoundException, IOException, NoSuchAlgorithmException{
+        if (alg.equals("AES")){
+            FileOutputStream outFile;
+            String aes = alg + ".key";
+            File out = new File(folder, aes);
+            outFile = new FileOutputStream(out);
+        
+            byte[] array = new byte[16]; // length is bounded by 7
+            new Random().nextBytes(array);
+            String generatedString = new String(array, Charset.forName("UTF-8"));
+            byte b[]= generatedString.getBytes();
+            outFile.write(b);
+            outFile.flush();
+            outFile.close();
+        }
+        else if (alg.equals("RSA")){
+            String pub = alg + "pub.key";
+            File pubOut = new File(folder, pub);
+            String pri = alg + "pri.key";
+            File priOut = new File(folder, pri);
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(2048);
+            KeyPair kp = kpg.generateKeyPair();
+            try (FileOutputStream out = new FileOutputStream(priOut)) {
+                    out.write(kp.getPrivate().getEncoded());
+                }
 
+            try (FileOutputStream out = new FileOutputStream(pubOut)) {
+                    out.write(kp.getPublic().getEncoded());
+                }
+        }
+        else { //DES
+            FileOutputStream outFile;
+            String aes = alg + ".key";
+            File outF = new File(folder, aes);
+            SecretKey key=KeyGenerator.getInstance("DES").generateKey();
+            try (FileOutputStream out = new FileOutputStream(outF)) {
+                out.write(key.getEncoded());
+            }
+        }
+    }
 }

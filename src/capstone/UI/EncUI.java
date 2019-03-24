@@ -14,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.Scanner;
 
@@ -45,6 +46,7 @@ public class EncUI extends javax.swing.JFrame {
     
     public String key = "";
     public String alg = "";
+    public File keyPath;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -73,6 +75,8 @@ public class EncUI extends javax.swing.JFrame {
         jRadioButton2 = new javax.swing.JRadioButton();
         jRadioButton3 = new javax.swing.JRadioButton();
         jButton2 = new javax.swing.JButton();
+        jTextField2 = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -149,10 +153,10 @@ public class EncUI extends javax.swing.JFrame {
         });
 
         buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("SHA");
+        jRadioButton2.setText("RSA");
 
         buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("MD5");
+        jRadioButton3.setText("DES");
 
         jButton2.setText("Choose Folder");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -161,49 +165,24 @@ public class EncUI extends javax.swing.JFrame {
             }
         });
 
+        jTextField2.setEnabled(false);
+        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Generate Key");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout encryptPanelLayout = new javax.swing.GroupLayout(encryptPanel);
         encryptPanel.setLayout(encryptPanelLayout);
         encryptPanelLayout.setHorizontalGroup(
             encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(encryptPanelLayout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(encryptPanelLayout.createSequentialGroup()
-                        .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(encryptPanelLayout.createSequentialGroup()
-                                .addComponent(encButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(encryptPanelLayout.createSequentialGroup()
-                                .addComponent(jRadioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(121, 121, 121)
-                                .addComponent(jRadioButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(105, 105, 105)))
-                        .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(encryptPanelLayout.createSequentialGroup()
-                                .addComponent(jRadioButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(12, 12, 12))
-                            .addComponent(decButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(21, 21, 21))
-                    .addGroup(encryptPanelLayout.createSequentialGroup()
-                        .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1)
-                            .addComponent(fileNameLbl))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(encryptPanelLayout.createSequentialGroup()
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 0, Short.MAX_VALUE))
-                                .addGroup(encryptPanelLayout.createSequentialGroup()
-                                    .addComponent(fileTextField)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(fcBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(encryptPanelLayout.createSequentialGroup()
-                                .addGap(267, 267, 267)
-                                .addComponent(jButton2)))))
-                .addGap(22, 22, 22))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, encryptPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -217,6 +196,51 @@ public class EncUI extends javax.swing.JFrame {
                         .addComponent(titleLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(87, 87, 87)))
                 .addContainerGap())
+            .addGroup(encryptPanelLayout.createSequentialGroup()
+                .addGap(51, 51, 51)
+                .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(encryptPanelLayout.createSequentialGroup()
+                        .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(encryptPanelLayout.createSequentialGroup()
+                                .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(encryptPanelLayout.createSequentialGroup()
+                                        .addComponent(encButton)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(encryptPanelLayout.createSequentialGroup()
+                                        .addComponent(jRadioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGap(111, 111, 111)
+                                        .addComponent(jRadioButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGap(115, 115, 115)))
+                                .addComponent(jRadioButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(33, 33, 33))
+                            .addGroup(encryptPanelLayout.createSequentialGroup()
+                                .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(fileNameLbl))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(encryptPanelLayout.createSequentialGroup()
+                                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(0, 2, Short.MAX_VALUE))
+                                        .addGroup(encryptPanelLayout.createSequentialGroup()
+                                            .addComponent(fileTextField)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(fcBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(encryptPanelLayout.createSequentialGroup()
+                                        .addGap(267, 267, 267)
+                                        .addComponent(jButton2)))))
+                        .addGap(22, 22, 22))
+                    .addGroup(encryptPanelLayout.createSequentialGroup()
+                        .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(decButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(encryptPanelLayout.createSequentialGroup()
+                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         encryptPanelLayout.setVerticalGroup(
             encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -239,11 +263,15 @@ public class EncUI extends javax.swing.JFrame {
                     .addComponent(jRadioButton1)
                     .addComponent(jRadioButton2)
                     .addComponent(jRadioButton3))
-                .addGap(18, 18, 18)
+                .addGap(19, 19, 19)
                 .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(encButton)
-                    .addComponent(decButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(encryptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(decButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(encButton))
+                .addGap(11, 11, 11)
                 .addComponent(statusLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -257,14 +285,14 @@ public class EncUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(encryptPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(encryptPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -275,8 +303,7 @@ public class EncUI extends javax.swing.JFrame {
     private void decButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decButtonActionPerformed
         String output;
         infoTextArea.append("\nAction Selected:    Decrypt File");
-        String pw = key;
-        if(!pw.equals("") && (!fileTextField.getText().equals(""))){
+        if(!jTextField1.getText().equals("") && (!fileTextField.getText().equals(""))){
             try {
                 Enumeration elements = buttonGroup1.getElements();
                 while (elements.hasMoreElements()) {
@@ -287,9 +314,25 @@ public class EncUI extends javax.swing.JFrame {
                 }
                 if (!fio.getEncFile().isDirectory()){
                     infoTextArea.append("\nDecrypting File...");
-                    output = Decryption.decrypt(fio.getEncFile(), pw, alg);
-                    infoTextArea.append("\nDecryption Successful");
-                    infoTextArea.append("\nOutput File Name:    \n" + output);
+                    
+                    String ext = "";
+                    JPanel panel = new JPanel();
+                    String[] tokens = fileTextField.getText().split("\\.(?=[^\\.]+$)");
+                    ext = tokens[tokens.length-1];
+                    if (!"enc".equals(ext)){
+                        JOptionPane.showMessageDialog(panel, "Please select a .enc file to decrypt it", "Error", JOptionPane.ERROR_MESSAGE);
+                        infoTextArea.append("\nDecryption Fail");
+                    }
+                    
+                    output = Decryption.decrypt(fio.getEncFile(), keyPath, alg);
+                    if (output.equals("keyfailure")){
+                        infoTextArea.append("\nDecryption Fail: Wrong key!");
+                    }
+                    else{
+                        infoTextArea.append("\nDecryption Successful");
+                        infoTextArea.append("\nOutput File Name:    \n" + output);
+                    }
+
                 }
                 else{
                     File folder = new File(fileTextField.getText());
@@ -297,12 +340,25 @@ public class EncUI extends javax.swing.JFrame {
                         if (!fileEntry.isDirectory()) {
                             fio.setEncFile(fileEntry);
                             infoTextArea.append("\nDecrypting File...");
-                            output = Decryption.decrypt(fio.getEncFile(), pw, alg);
-                            infoTextArea.append("\nDecryption Successful");
-                            infoTextArea.append("\nOutput File Name:    \n" + output);
+                            String ext = "";
+                            String[] tokens = fileEntry.toString().split("\\.(?=[^\\.]+$)");
+                            ext = tokens[tokens.length-1];
+                            if (!"enc".equals(ext)){
+                                infoTextArea.append("\n" + fileEntry.toString() + " Decryption Fail: Not .enc file");
+                                continue;
+                            }
+                            output = Decryption.decrypt(fio.getEncFile(), keyPath, alg);
+                            if (output.equals("keyfailure")){
+                                infoTextArea.append("\nDecryption Fail: Wrong key!");
+                            }
+                            else{
+                                infoTextArea.append("\nDecryption Successful");
+                                infoTextArea.append("\nOutput File Name:    \n" + output);
+                            }
                         }
                     }
                 }
+                
                 
             } catch (Exception ex) {
                 Logger.getLogger(EncUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -319,9 +375,10 @@ public class EncUI extends javax.swing.JFrame {
        
         String output;
         infoTextArea.append("\nAction Selected:   Encrypt File");
-        String pw=key;
+//        String pw=key;
         
-        if(!pw.equals("") && (!fileTextField.getText().equals(""))){
+//        if(!pw.equals("") && (!fileTextField.getText().equals(""))){
+        if(!jTextField1.getText().equals("") && (!fileTextField.getText().equals(""))){
             try {
                 Enumeration elements = buttonGroup1.getElements();
                 while (elements.hasMoreElements()) {
@@ -332,9 +389,14 @@ public class EncUI extends javax.swing.JFrame {
                 }
                 if (!fio.getDecFile().isDirectory()){
                     infoTextArea.append("\nEncrypting File...");
-                    output = Encryption.encrypt(fio.getDecFile(), pw, alg);
-                    infoTextArea.append("\nEncryption Successful");
-                    infoTextArea.append("\nOutput File Name: " + output);
+                    output = Encryption.encrypt(fio.getDecFile(), keyPath, alg);
+                    if (output.equals("keyfailure")){
+                        infoTextArea.append("\nEncryption Fail: Wrong key!");
+                    }
+                    else{
+                        infoTextArea.append("\nEncryption Successful");
+                        infoTextArea.append("\nOutput File Name: " + output);   
+                    }
                 }
                 else{
                     File folder = new File(fileTextField.getText());
@@ -342,9 +404,15 @@ public class EncUI extends javax.swing.JFrame {
                         if (!fileEntry.isDirectory()) {
                             fio.setDecFile(fileEntry);
                             infoTextArea.append("\nEncrypting File...");
-                            output = Encryption.encrypt(fio.getDecFile(), pw, alg);
-                            infoTextArea.append("\nEncryption Successful");
-                            infoTextArea.append("\nOutput File Name: " + output);
+                            output = Encryption.encrypt(fio.getDecFile(), keyPath, alg);
+                            if (output.equals("keyfailure")){
+                                infoTextArea.append("\nEncryption Fail: Wrong key!");
+                            }
+                            else{
+                                infoTextArea.append("\nEncryption Successful");
+                                infoTextArea.append("\nOutput File Name: " + output);
+                            }
+                            
                         }
                     }
                 }
@@ -403,24 +471,26 @@ public class EncUI extends javax.swing.JFrame {
         String ext = "";
         JPanel panel = new JPanel();
         File file = null;
-        while (!"txt".equals(ext)){
+        while (!"key".equals(ext)){
             file = selectFile();
             String[] tokens = file.toString().split("\\.(?=[^\\.]+$)");
             ext = tokens[tokens.length-1];
-            if (!"txt".equals(ext)){
-                JOptionPane.showMessageDialog(panel, "Please select a txt file for key", "Error", JOptionPane.ERROR_MESSAGE);
+            if (!"key".equals(ext)){
+                JOptionPane.showMessageDialog(panel, "Please select a .key file for key", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
         
-        try {
-            key = new Scanner(file).useDelimiter("\\Z").next();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(EncUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            key = new Scanner(file).useDelimiter("\\Z").next();
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(EncUI.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        
         
         if(file!=null){
             infoTextArea.append("\nKey Selected:  " + file.getName());
             jTextField1.setText(file.getAbsolutePath());
+            keyPath = file;
         }else{
             infoTextArea.append("\nKey Selection Cancelled");
         }        
@@ -459,6 +529,31 @@ public class EncUI extends javax.swing.JFrame {
             infoTextArea.append("\nFolder Selection Cancelled");
         }        
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        File file = selectFolder();
+        jTextField2.setText(file.getAbsolutePath());
+        Enumeration elements = buttonGroup1.getElements();
+        while (elements.hasMoreElements()) {
+          AbstractButton button = (AbstractButton)elements.nextElement();
+          if (button.isSelected()) {
+            alg = button.getText();
+          }
+        }
+        try {
+            Encryption.genKey(file, alg);
+        } catch (IOException ex) {
+            Logger.getLogger(EncUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(EncUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        infoTextArea.append("\nGenerate " + alg + " Key Successfully");
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField2ActionPerformed
 
     
 
@@ -529,12 +624,14 @@ public class EncUI extends javax.swing.JFrame {
     private javax.swing.JTextArea infoTextArea;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JLabel titleLbl;
     // End of variables declaration//GEN-END:variables

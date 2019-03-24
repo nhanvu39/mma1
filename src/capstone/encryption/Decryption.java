@@ -4,9 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
@@ -33,97 +38,122 @@ public class Decryption {
      * @throws Exception Any exception thrown during the decryption process causing the decryption to fail.  Most common exception thrown
      * is a BadPaddingException which indicates that the user has entered an incorrect password and the cipher fails to initialize.
      */
-    public static String decrypt(File file, String password, String alg) throws Exception {
-	
+    public static String decrypt(File file, File key, String alg) throws Exception {
         String fName;
-        FileInputStream fis=null;
-        FileOutputStream fos=null;
-        
-        byte[] salt = new byte[8];
-        byte[] iv = new byte[16];
-        
-        
-        try{           
-            fis = new FileInputStream(file);
-            int read=fis.read(salt);
-            if(read!= salt.length){
-                throw new IOException();
-            }
-        }catch(IOException e){
-            return "File Read Error:  Please try again";
-        }finally{
-            if(fis!=null)
-                fis.close();
-        }
-        
-        try{
-            fis=new FileInputStream(file);
-            long skip = fis.skip(salt.length);
+	if (alg.equals("AES")){
+            String password="";
+            byte[] bytes = Files.readAllBytes(Paths.get(key.toString()));
+            password = Arrays.toString(bytes);
             
-            if(skip!=salt.length){
-                return "File Salt Read Error, please try again.";
-            }
             
-            int read = fis.read(iv);
-            if(read!= iv.length){
-                return "File IV Read Failure, please try again.";
-            }
-        }catch(IOException e){
-            return "File Read Error Occurred.  Please try again";
-        }finally{
-            if(fis!=null)
-                fis.close();
-            
-        }
-        
-        
-	SecretKeyFactory factory = SecretKeyFactory
-			.getInstance(KEYFAC);
-	KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 65536,
-			128);
-	SecretKey tmp = factory.generateSecret(keySpec);
-	SecretKey secret = new SecretKeySpec(tmp.getEncoded(), ALG);
+            FileInputStream fis=null;
+            FileOutputStream fos=null;
 
-	// file decryption
-        
-	Cipher cipher = Cipher.getInstance(CIPH);
-	cipher.init(Cipher.DECRYPT_MODE, secret, new IvParameterSpec(iv));
-        
-        fName = file.toString().substring(0, file.toString().length()-4);
-        //fis = new FileInputStream(file);
-        //fos = new FileOutputStream(fName);
-        try{
-            
-            fos = new FileOutputStream(fName);
-            fis = new FileInputStream(file);            
-            
-            byte[] in = new byte[64];
-            int read;
-            fis.skip(salt.length+iv.length);
-            
-            while ((read = fis.read(in)) != -1) {
-                byte[] output = cipher.update(in, 0, read);
+            byte[] salt = new byte[8];
+            byte[] iv = new byte[16];
+
+
+            try{           
+                fis = new FileInputStream(file);
+                int read=fis.read(salt);
+                if(read!= salt.length){
+                    throw new IOException();
+                }
+            }catch(IOException e){
+                return "File Read Error:  Please try again";
+            }finally{
+                if(fis!=null)
+                    fis.close();
+            }
+
+            try{
+                fis=new FileInputStream(file);
+                long skip = fis.skip(salt.length);
+
+                if(skip!=salt.length){
+                    return "File Salt Read Error, please try again.";
+                }
+
+                int read = fis.read(iv);
+                if(read!= iv.length){
+                    return "File IV Read Failure, please try again.";
+                }
+            }catch(IOException e){
+                return "File Read Error Occurred.  Please try again";
+            }finally{
+                if(fis!=null)
+                    fis.close();
+
+            }
+
+
+            SecretKeyFactory factory = SecretKeyFactory
+                            .getInstance(KEYFAC);
+            KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 65536,
+                            128);
+            SecretKey tmp = factory.generateSecret(keySpec);
+            SecretKey secret = new SecretKeySpec(tmp.getEncoded(), ALG);
+
+            // file decryption
+
+            Cipher cipher = Cipher.getInstance(CIPH);
+            cipher.init(Cipher.DECRYPT_MODE, secret, new IvParameterSpec(iv));
+
+            fName = file.toString().substring(0, file.toString().length()-4);
+            //fis = new FileInputStream(file);
+            //fos = new FileOutputStream(fName);
+            try{
+
+                fos = new FileOutputStream(fName);
+                fis = new FileInputStream(file);            
+
+                byte[] in = new byte[64];
+                int read;
+                fis.skip(salt.length+iv.length);
+
+                while ((read = fis.read(in)) != -1) {
+                    byte[] output = cipher.update(in, 0, read);
+                    if (output != null)
+                        fos.write(output);
+                } 
+
+                byte[] output = cipher.doFinal();
+
                 if (output != null)
                     fos.write(output);
-            } 
-            
-            byte[] output = cipher.doFinal();
-            
-            if (output != null)
-                fos.write(output);
-        }catch(IOException e){    
-            
-            return "File Read Error Occurred, Please try again.";
-        
-        }finally{
-            if(fis!=null)
-                fis.close();
-            if(fos!=null){
-                fos.flush();
-                fos.close();
+            }catch(IOException e){    
+
+                return "File Read Error Occurred, Please try again.";
+
+            }finally{
+                if(fis!=null)
+                    fis.close();
+                if(fos!=null){
+                    fos.flush();
+                    fos.close();
+                }
             }
+            return fName;
         }
-        return fName;
+        else if (alg.equals("RSA")){
+            
+            if (RSA.doDecrypt(file.toString(), key.toString()) == -1){
+                return "keyfailure";
+            }
+            fName = file.toString().substring(0, file.toString().length()-4);
+            return fName;
+        }
+        else{
+            // decode the base64 encoded string
+            byte[] decodedKey = Files.readAllBytes(Paths.get(key.toString()));
+//            byte[] decodedKey = Base64.getDecoder().decode(bytes);
+            // rebuild key using SecretKeySpec
+            SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "DES"); 
+            DES.decryptFile(file, originalKey);
+            fName = file.toString().substring(0, file.toString().length()-4);
+            return fName;
+        }
+//        return "";
     }
 
 }
